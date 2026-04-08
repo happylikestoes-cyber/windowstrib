@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Perplexity Tribute Edition v3.1</title>
+<style>
+:root{
+  --desktop:#008080;
+  --wallpaper:#008080;
+  --gray:#c0c0c0;
+  --gray2:#d4d0c8;
+  --dark:#808080;
+  --black:#000;
+  --white:#fff;
+  --navy:#000080;
+  --blue:#0000aa;
+  --shadow:#404040;
+  --dos-green:#1aff1a;
+  --menu-h:28px;
+  --task-h:32px;
+  --font: "MS Sans Serif", "Chicago", "Courier New", monospace;
+}
+*{box-sizing:border-box;user-select:none;-webkit-user-select:none}
+html,body{margin:0;height:100%;overflow:hidden;font-family:var(--font);background:#000;image-rendering:pixelated}
+body.mobile .desktop-shell{display:none}
+body.mobile .mobile-warning{display:flex}
+.mobile-warning{display:none;align-items:center;justify-content:center;height:100vh;background:#0000aa;color:#fff;padding:24px;text-align:center;font-size:16px;line-height:1.5}
+.desktop-shell{position:relative;height:100vh;background:var(--wallpaper);overflow:hidden}
+.desktop{position:absolute;inset:0 0 var(--task-h) 0;background:var(--wallpaper)}
+.menu-bar{position:absolute;top:0;left:0;right:0;height:var(--menu-h);background:var(--gray);display:flex;align-items:center;gap:2px;padding:2px 4px;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #000;border-bottom:2px solid #000;z-index:2000}
+.menu-title{font-weight:bold;padding:0 8px;margin-right:8px}
+.menu-item,.task-btn,.button,.dialog-btn,.ms-btn{font-family:var(--font);font-size:12px;color:#000;background:var(--gray);border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #000;border-bottom:2px solid #000;min-height:22px;padding:2px 10px;cursor:default}
+.menu-item.active,.task-btn.active,.button:active,.dialog-btn:active,.ms-btn:active,.pressed{border-top:2px solid #000;border-left:2px solid #000;border-right:2px solid #fff;border-bottom:2px solid #fff}
+.dropdown{position:absolute;top:28px;background:var(--gray);min-width:190px;display:none;padding:2px;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #000;border-bottom:2px solid #000;z-index:2100}
+.dropdown.open{display:block}
+.dropdown-item{padding:5px 16px 5px 12px;font-size:12px;white-space:nowrap}
+.dropdown-item:hover{background:var(--navy);color:#fff}
+.dropdown-sep{height:2px;background:#808080;border-bottom:1px solid #fff;margin:2px 4px}
+.icons{position:absolute;top:40px;left:8px;display:grid;grid-template-columns:repeat(2,90px);grid-auto-rows:84px;gap:6px;align-content:start}
+.icon{width:82px;text-align:center;color:#fff;font-size:12px;padding:4px;outline:none;position:relative}
+.icon-glyph{width:34px;height:34px;margin:0 auto 6px auto;position:relative;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #000;border-bottom:2px solid #000;background:var(--gray2);color:#000;display:flex;align-items:center;justify-content:center;font-size:20px}
+.icon-label{display:inline-block;padding:1px 4px;line-height:1.15;text-shadow:1px 1px 0 #000}
+.icon.selected .icon-label,.icon:focus .icon-label{background:var(--navy);color:#fff;text-shadow:none;outline:1px dotted #fff;outline-offset:-1px}
+.icon.selected .icon-glyph,.icon:focus .icon-glyph{filter:brightness(1.03)}
+.window{position:absolute;background:var(--gray);min-width:260px;min-height:140px;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #000;border-bottom:2px solid #000;box-shadow:1px 1px 0 #000}
+.window.hidden{display:none}
+.window.maximized{inset:30px 4px 36px 4px !important;width:auto !important;height:auto !important}
+.title-bar{height:24px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:2px 2px 2px 6px;font-size:12px;cursor:move;font-weight:bold}
+.window.inactive .title-bar{background:#808080}
+.title-left{display:flex;align-items:center;gap:6px;min-width:0}.title-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.title-controls{display:flex;gap:2px}
+.ctrl{width:20px;height:18px;background:var(--gray);color:#000;display:flex;align-items:center;justify-content:center;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #000;border-bottom:2px solid #000;font-size:11px;font-weight:bold;cursor:default}
+.window-body{height:calc(100% - 24px);padding:8px;overflow:auto;background:var(--gray)}
+.statusbar{display:flex;justify-content:space-between;gap:8px;padding:4px 6px;margin-top:6px;font-size:12px;border-top:2px solid #808080;border-left:2px solid #808080;border-right:2px solid #fff;border-bottom:2px solid #fff;background:#cfcfcf}
+.taskbar{position:absolute;left:0;right:0;bottom:0;height:var(--task-h);background:var(--gray);display:flex;align-items:center;gap:4px;padding:4px;border-top:2px solid #fff;z-index:2200}
+.task-buttons{display:flex;gap:4px;flex:1;overflow:auto}
+.clock{min-width:74px;text-align:center;padding:3px 6px;font-size:12px;background:var(--gray);border-top:2px solid #808080;border-left:2px solid #808080;border-right:2px solid #fff;border-bottom:2px solid #fff}
+.context-menu,.system-menu{position:absolute;background:var(--gray);display:none;min-width:180px;padding:2px;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #000;border-bottom:2px solid #000;z-index:3000}
+.context-menu.open,.system-menu.open{display:block}
+.context-item{padding:5px 10px;font-size:12px}.context-item:hover{background:var(--navy);color:#fff}
+.dialog-overlay,.boot-screen,.bsod{position:absolute;inset:0;z-index:5000;display:none;align-items:center;justify-content:center}
+.dialog-overlay.open,.boot-screen.open,.bsod.open{display:flex}
+.dialog{width:min(360px,92vw);background:var(--gray);padding:4px;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #000;border-bottom:2px solid #000}
+.dialog-title{height:24px;background:var(--navy);color:#fff;font-weight:bold;display:flex;align-items:center;justify-content:space-between;padding:0 6px;margin-bottom:8px}
+.dialog-body{padding:8px;font-size:12px;line-height:1.5;background:var(--gray);color:#000}
+.dialog-actions{display:flex;justify-content:center;gap:8px;padding:8px}
+.boot-screen{background:#000;color:#fff;flex-direction:column;gap:18px;font-size:16px}
+.boot-logo{font-size:28px;font-weight:bold;letter-spacing:1px}
+.progress-wrap{width:min(420px,80vw);height:24px;background:#111;border:2px solid #fff;padding:2px}
+.progress-bar{height:100%;width:0;background:linear-gradient(90deg,#fff 0 20%,#aaa 20% 40%,#fff 40% 60%,#aaa 60% 80%,#fff 80% 100%)}
+.bsod{background:#0000aa;color:#fff;padding:32px;align-items:flex-start;justify-content:flex-start}
+.bsod pre{font-family:"Courier New",monospace;font-size:18px;white-space:pre-wrap;line-height:1.4}
+.about-logo{font-size:28px;margin-bottom:6px}
+.notepad-area{width:100%;height:calc(100% - 44px);min-height:220px;resize:none;background:#fff;color:#000;border:2px inset #c0c0c0;padding:8px;font:12px "Courier New",monospace;user-select:text;-webkit-user-select:text}
+.row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.textbox,.pq-input{flex:1;background:#fff;border:2px inset #c0c0c0;padding:4px 6px;font:12px var(--font);user-select:text;-webkit-user-select:text}
+.pq-spinner{width:18px;height:18px;display:inline-block;border:2px solid transparent;border-top-color:#000;border-right-color:#000;opacity:0;transform:rotate(0deg)}
+.pq-spinner.spin{opacity:1;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.mine-wrap{display:flex;flex-direction:column;gap:6px;align-items:center}
+.mine-top{display:flex;justify-content:space-between;align-items:center;width:100%;background:#c0c0c0;border:2px inset #c0c0c0;padding:6px}
+.seg{background:#000;color:#f00;padding:4px 8px;font:16px "Courier New",monospace;min-width:52px;text-align:center}
+.face{width:34px;height:34px;background:var(--gray);font-size:18px;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #000;border-bottom:2px solid #000;display:flex;align-items:center;justify-content:center}
+.mine-grid{display:grid;grid-template-columns:repeat(9,24px);grid-template-rows:repeat(9,24px);gap:0;background:#808080;border:3px inset #c0c0c0}
+.cell{width:24px;height:24px;background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #808080;border-bottom:2px solid #808080;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px}
+.cell.revealed{border:1px solid #808080;background:#c0c0c0}
+.cell.mine{background:#f88}
+.c1{color:#0000ff}.c2{color:#008000}.c3{color:#ff0000}.c4{color:#000080}.c5{color:#800000}.c6{color:#008080}.c7{color:#000}.c8{color:#808080}
+.dos-screen{background:#000;color:var(--dos-green);height:100%;padding:8px;font:14px "Courier New",monospace;display:flex;flex-direction:column}
+.dos-output{flex:1;overflow:auto;white-space:pre-wrap;user-select:text;-webkit-user-select:text}
+.dos-input-row{display:flex;gap:6px;align-items:center}
+.dos-input{flex:1;background:#000;color:var(--dos-green);border:none;outline:none;font:14px "Courier New",monospace;user-select:text;-webkit-user-select:text}
+.perplexity-panel p{font-size:12px;line-height:1.45;margin:0 0 8px}
+.small{font-size:12px}.center{text-align:center}
+.hidden-vis{visibility:hidden}.wallpaper-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.swatch{height:34px;border:2px solid #000;cursor:default}
+.swatch.teal{background:#008080}.swatch-plum{background:#5b3a5e}.swatch-blue{background:#003c7a}.swatch-olive{background:#5d6b2f}
+.error-icon{font-size:28px;margin-right:10px}.err-row{display:flex;align-items:flex-start}
+@media (max-width: 700px), (pointer:coarse){ body{background:#000} }
+</style>
+</head>
+<body>
+<div class="mobile-warning"><div><div style="font-size:22px;margin-bottom:10px">Windows 3.1 Simulator</div><div>This tribute edition requires a mouse or trackpad for proper use.</div><div style="margin-top:10px">Please reopen it on a desktop or laptop browser.</div></div></div>
+<div class="desktop-shell">
+  <div class="boot-screen open" id="bootScreen"><div class="boot-logo">Perplexity Tribute Edition v3.1</div><div>Starting Windows...</div><div class="progress-wrap"><div class="progress-bar" id="bootBar"></div></div><div class="small">Loading Program Manager, accessories, and tribute modules</div></div>
+  <div class="bsod" id="bsod"><pre>Perplexity Tribute Edition
+
+A problem has been detected and Windows has been paused to prevent damage
+to your productivity.
+
+CTRL+ALT+DEL PARODY SCREEN
+
+An application has performed an operation involving too much nostalgia.
+
+Pressing Ctrl+Alt+Del was acknowledged.
+Recovery subsystem will automatically restart in a moment.
+
+*** STOP: 0x00003131 (0x0000PPLX,0x0000DOS,0x0000MINE,0x0000NOTE)</pre></div>
+  <div class="desktop" id="desktop">
+    <div class="menu-bar" id="menuBar">
+      <div class="menu-title">Program Manager</div>
+      <div class="menu-item" data-menu="file">File</div>
+      <div class="menu-item" data-menu="options">Options</div>
+      <div class="menu-item" data-menu="window">Window</div>
+      <div class="menu-item" data-menu="help">Help</div>
+      <div class="dropdown" id="menu-file" style="left:110px"><div class="dropdown-item" data-open="perplexity">Open Perplexity AI</div><div class="dropdown-item" data-open="notepad">Open Notepad</div><div class="dropdown-item" data-open="mine">Open Mine Field</div><div class="dropdown-item" data-open="dos">Open DOS Prompt</div><div class="dropdown-sep"></div><div class="dropdown-item" data-action="show-about">About</div></div>
+      <div class="dropdown" id="menu-options" style="left:148px"><div class="dropdown-item" data-action="wallpaper-teal">Wallpaper: Teal</div><div class="dropdown-item" data-action="wallpaper-plum">Wallpaper: Plum</div><div class="dropdown-item" data-action="wallpaper-blue">Wallpaper: Cobalt</div><div class="dropdown-item" data-action="wallpaper-olive">Wallpaper: Olive</div></div>
+      <div class="dropdown" id="menu-window" style="left:210px"><div class="dropdown-item" data-action="cascade">Cascade</div><div class="dropdown-item" data-action="tile">Tile</div><div class="dropdown-item" data-action="min-all">Minimize All</div></div>
+      <div class="dropdown" id="menu-help" style="left:276px"><div class="dropdown-item" data-action="show-about">About Perplexity Tribute Edition</div><div class="dropdown-item" data-action="show-error">Test Error Box</div></div>
+    </div>
+
+    <div class="icons">
+      <div class="icon" tabindex="0" data-open="perplexity"><div class="icon-glyph">P</div><div class="icon-label">Perplexity<br>AI</div></div>
+      <div class="icon" tabindex="0" data-open="notepad"><div class="icon-glyph">🗒</div><div class="icon-label">Notepad</div></div>
+      <div class="icon" tabindex="0" data-open="mine"><div class="icon-glyph">💣</div><div class="icon-label">Mine Field</div></div>
+      <div class="icon" tabindex="0" data-open="dos"><div class="icon-glyph">C:</div><div class="icon-label">DOS Prompt</div></div>
+    </div>
+
+    <div class="window hidden" id="win-perplexity" style="left:170px;top:72px;width:420px;height:220px"><div class="title-bar"><div class="title-left"><span>⌘</span><span class="title-text">Perplexity AI</span></div><div class="title-controls"><div class="ctrl" data-win="perplexity" data-act="min">_</div><div class="ctrl" data-win="perplexity" data-act="max">□</div><div class="ctrl" data-win="perplexity" data-act="close">✕</div></div></div><div class="window-body perplexity-panel"><p>Ask Perplexity in a new browser tab, tribute-edition style.</p><div class="row"><input id="pqInput" class="pq-input" type="text" value="What made Windows 3.1 iconic?" aria-label="Perplexity query"><button class="button" id="pqAsk">Ask</button><span class="pq-spinner" id="pqSpinner"></span></div><p class="small">The Ask button opens perplexity.ai/search?q= with your query. The hourglass animates briefly like an old busy cursor.</p><div class="statusbar"><span>Ready</span><span id="pqStatus">Idle</span></div></div></div>
+
+    <div class="window hidden" id="win-notepad" style="left:220px;top:108px;width:470px;height:340px"><div class="title-bar"><div class="title-left"><span>≡</span><span class="title-text">Notepad - UNTITLED.TXT</span></div><div class="title-controls"><div class="ctrl" data-win="notepad" data-act="min">_</div><div class="ctrl" data-win="notepad" data-act="max">□</div><div class="ctrl" data-win="notepad" data-act="close">✕</div></div></div><div class="window-body" style="display:flex;flex-direction:column"><div class="row" style="margin-bottom:6px"><button class="button" id="noteSave">Save .TXT</button><button class="button" id="noteClear">Clear</button><span class="small" id="noteStatus">Unsaved document</span></div><textarea class="notepad-area" id="noteText">Perplexity Tribute Edition v3.1
+
+This is a real text editor. You can type and save a .txt file using a browser download blob.</textarea></div></div>
+
+    <div class="window hidden" id="win-mine" style="left:430px;top:86px;width:310px;height:370px"><div class="title-bar"><div class="title-left"><span>✱</span><span class="title-text">Mine Field</span></div><div class="title-controls"><div class="ctrl" data-win="mine" data-act="min">_</div><div class="ctrl" data-win="mine" data-act="max">□</div><div class="ctrl" data-win="mine" data-act="close">✕</div></div></div><div class="window-body"><div class="mine-wrap"><div class="mine-top"><div class="seg" id="mineCount">010</div><button class="face" id="mineReset">🙂</button><div class="seg" id="mineTime">000</div></div><div class="mine-grid" id="mineGrid"></div></div></div></div>
+
+    <div class="window hidden" id="win-dos" style="left:120px;top:150px;width:500px;height:300px"><div class="title-bar"><div class="title-left"><span>C:\</span><span class="title-text">MS-DOS Prompt</span></div><div class="title-controls"><div class="ctrl" data-win="dos" data-act="min">_</div><div class="ctrl" data-win="dos" data-act="max">□</div><div class="ctrl" data-win="dos" data-act="close">✕</div></div></div><div class="window-body" style="padding:0"><div class="dos-screen"><div class="dos-output" id="dosOutput"></div><div class="dos-input-row"><span>C:\&gt;</span><input class="dos-input" id="dosInput" autocomplete="off" spellcheck="false" aria-label="DOS command input"></div></div></div></div>
+
+    <div class="taskbar"><button class="task-btn" id="startBtn">Program Manager</button><div class="task-buttons" id="taskButtons"></div><div class="clock" id="clock">00:00 PM</div></div>
+    <div class="context-menu" id="desktopMenu"><div class="context-item" data-action="wallpaper-teal">Teal wallpaper</div><div class="context-item" data-action="wallpaper-plum">Plum wallpaper</div><div class="context-item" data-action="wallpaper-blue">Cobalt wallpaper</div><div class="context-item" data-action="wallpaper-olive">Olive wallpaper</div><div class="context-item" data-action="show-about">About</div><div class="context-item" data-action="show-error">Error box</div></div>
+    <div class="dialog-overlay" id="dialogLayer"></div>
+  </div>
+</div>
+<script>
+(() => {
+  const body = document.body;
+  const coarse = window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 700;
+  if (coarse) body.classList.add('mobile');
+  const audioCtx = (() => { try { return new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ return null; } })();
+  function beep(freq=660,dur=0.06,type='sine',vol=0.03){ if(!audioCtx) return; if(audioCtx.state === 'suspended') audioCtx.resume(); const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.type = type; o.frequency.value = freq; g.gain.value = vol; o.connect(g); g.connect(audioCtx.destination); o.start(); g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur); o.stop(audioCtx.currentTime + dur); }
+  const beeps = { click(){beep(820,.03);}, open(){beep(660,.04);setTimeout(()=>beep(880,.05),45);}, error(){beep(220,.08,'sine',.04);setTimeout(()=>beep(180,.1,'sine',.04),90);}, boot(){[440,550,660].forEach((f,i)=>setTimeout(()=>beep(f,.08),i*100));} };
+  const desktop = document.getElementById('desktop');
+  const boot = document.getElementById('bootScreen');
+  const bootBar = document.getElementById('bootBar');
+  const dialogLayer = document.getElementById('dialogLayer');
+  const desktopMenu = document.getElementById('desktopMenu');
+  const taskButtons = document.getElementById('taskButtons');
+  const clock = document.getElementById('clock');
+  const startBtn = document.getElementById('startBtn');
+  const bsod = document.getElementById('bsod');
+  const apps = {
+    perplexity: { el: document.getElementById('win-perplexity'), title: 'Perplexity AI', task:null, minimized:false, maximized:false, prev:null },
+    notepad: { el: document.getElementById('win-notepad'), title: 'Notepad', task:null, minimized:false, maximized:false, prev:null },
+    mine: { el: document.getElementById('win-mine'), title: 'Mine Field', task:null, minimized:false, maximized:false, prev:null },
+    dos: { el: document.getElementById('win-dos'), title: 'MS-DOS Prompt', task:null, minimized:false, maximized:false, prev:null }
+  };
+  let z = 100;
+  let activeMenu = null;
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function setClock(){ const d = new Date(); let h = d.getHours(), m = d.getMinutes(); const ap = h >= 12 ? 'PM':'AM'; h = h % 12 || 12; clock.textContent = `${h}:${pad(m)} ${ap}`; }
+  setClock(); setInterval(setClock, 1000);
+  function clearIconSelection(){ document.querySelectorAll('.icon.selected').forEach(i=>i.classList.remove('selected')); }
+  function selectIcon(el){ clearIconSelection(); if(el) el.classList.add('selected'); }
+  function closeMenus(){ document.querySelectorAll('.dropdown.open,.context-menu.open').forEach(m => m.classList.remove('open')); document.querySelectorAll('.menu-item.active').forEach(m=>m.classList.remove('active')); activeMenu = null; }
+  document.querySelectorAll('.menu-item').forEach(item => { item.addEventListener('click', e => { e.stopPropagation(); beeps.click(); const name = item.dataset.menu; const menu = document.getElementById('menu-'+name); const open = menu.classList.contains('open'); closeMenus(); if(!open){ menu.classList.add('open'); item.classList.add('active'); activeMenu = menu; } }); });
+  startBtn.addEventListener('click', ()=>{ beeps.click(); const file = document.getElementById('menu-file'); const open = file.classList.contains('open'); closeMenus(); if(!open){ file.style.left='4px'; file.style.bottom='32px'; file.style.top='auto'; file.classList.add('open'); startBtn.classList.add('active'); activeMenu=file; } else startBtn.classList.remove('active');});
+  document.addEventListener('click', ()=>{ closeMenus(); startBtn.classList.remove('active'); desktopMenu.classList.remove('open'); });
+  function setWallpaper(v){ document.documentElement.style.setProperty('--wallpaper', v); desktop.style.background = v; }
+  const wallpaperMap = { 'wallpaper-teal':'#008080', 'wallpaper-plum':'#5b3a5e', 'wallpaper-blue':'#003c7a', 'wallpaper-olive':'#5d6b2f' };
+  function taskFor(appKey){ const app = apps[appKey]; if(app.task) return; const b = document.createElement('button'); b.className = 'task-btn'; b.textContent = app.title; b.addEventListener('click', ()=>{ if(!app.el.classList.contains('hidden') && !app.minimized && document.activeElement !== b){ minimizeWindow(appKey); } else restoreWindow(appKey); }); taskButtons.appendChild(b); app.task = b; }
+  function syncTasks(){ Object.entries(apps).forEach(([k,a]) => { if(a.task){ a.task.classList.toggle('active', !a.el.classList.contains('hidden') && !a.minimized && a.el.classList.contains('focused')); } }); }
+  function focusWindow(key){ Object.values(apps).forEach(a=>{ a.el.classList.add('inactive'); a.el.classList.remove('focused'); }); const app = apps[key]; app.el.classList.remove('inactive'); app.el.classList.add('focused'); app.el.style.zIndex = ++z; syncTasks(); if(key==='dos') setTimeout(()=>document.getElementById('dosInput').focus(),20); if(key==='notepad') setTimeout(()=>document.getElementById('noteText').focus(),20); if(key==='perplexity') setTimeout(()=>document.getElementById('pqInput').focus(),20); }
+  function openWindow(key){ const app = apps[key]; taskFor(key); app.el.classList.remove('hidden'); app.minimized = false; app.el.style.display='block'; focusWindow(key); beeps.open(); syncTasks(); }
+  function closeWindow(key){ const app = apps[key]; app.el.classList.add('hidden'); app.minimized = false; syncTasks(); beeps.click(); }
+  function minimizeWindow(key){ const app = apps[key]; app.minimized = true; app.el.style.display='none'; syncTasks(); beeps.click(); }
+  function restoreWindow(key){ const app = apps[key]; app.el.classList.remove('hidden'); app.minimized = false; app.el.style.display='block'; focusWindow(key); }
+  function maximizeWindow(key){ const app = apps[key]; if(!app.maximized){ app.prev = { left: app.el.style.left, top: app.el.style.top, width: app.el.style.width, height: app.el.style.height }; app.el.classList.add('maximized'); app.maximized = true; } else { app.el.classList.remove('maximized'); app.maximized = false; if(app.prev) Object.assign(app.el.style, app.prev); } focusWindow(key); beeps.click(); }
+  document.querySelectorAll('[data-open]').forEach(el => {
+    if(el.classList.contains('icon')){
+      el.addEventListener('click', e => { e.stopPropagation(); selectIcon(el); beeps.click(); });
+      el.addEventListener('dblclick', e => { e.stopPropagation(); selectIcon(el); openWindow(el.dataset.open); });
+      el.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); selectIcon(el); openWindow(el.dataset.open); } if(e.key === ' '){ e.preventDefault(); selectIcon(el); beeps.click(); } });
+      el.addEventListener('focus', ()=>selectIcon(el));
+    } else {
+      el.addEventListener('click', e => { e.stopPropagation(); openWindow(el.dataset.open); });
+    }
+  });
+  document.querySelectorAll('.dropdown-item,.context-item').forEach(item => item.addEventListener('click', e => { e.stopPropagation(); const act = item.dataset.action; closeMenus(); startBtn.classList.remove('active'); if(act && wallpaperMap[act]) setWallpaper(wallpaperMap[act]); if(act==='show-about') showAbout(); if(act==='show-error') showError('Classic Windows-style warning', 'This operation completed successfully, but looked suspiciously modern.'); if(act==='cascade') cascade(); if(act==='tile') tile(); if(act==='min-all') Object.keys(apps).forEach(minimizeWindow); }));
+  document.querySelectorAll('.ctrl').forEach(c => c.addEventListener('click', e => { e.stopPropagation(); const key = c.dataset.win, act = c.dataset.act; if(act==='close') closeWindow(key); if(act==='min') minimizeWindow(key); if(act==='max') maximizeWindow(key); }));
+  Object.entries(apps).forEach(([k,a]) => { const bar = a.el.querySelector('.title-bar'); bar.addEventListener('mousedown', startDrag(k)); a.el.addEventListener('mousedown', ()=>focusWindow(k)); });
+  function startDrag(key){ return function(e){ if(e.target.classList.contains('ctrl') || apps[key].maximized) return; focusWindow(key); const el = apps[key].el; const r = el.getBoundingClientRect(); const ox = e.clientX - r.left, oy = e.clientY - r.top; function move(ev){ el.style.left = Math.max(0, Math.min(window.innerWidth - 120, ev.clientX - ox)) + 'px'; el.style.top = Math.max(30, Math.min(window.innerHeight - 70, ev.clientY - oy)) + 'px'; } function up(){ document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); } document.addEventListener('mousemove', move); document.addEventListener('mouseup', up); } }
+  function cascade(){ let i=0; Object.keys(apps).forEach(k=>{ const a=apps[k]; if(!a.el.classList.contains('hidden')){ a.el.classList.remove('maximized'); a.maximized=false; a.el.style.width='420px'; a.el.style.height=(k==='mine'?'370px':'300px'); a.el.style.left=(40+i*28)+'px'; a.el.style.top=(50+i*24)+'px'; a.el.style.display='block'; a.minimized=false; i++; } }); }
+  function tile(){ const visible = Object.keys(apps).filter(k=>!apps[k].el.classList.contains('hidden')); const cols = Math.ceil(Math.sqrt(visible.length||1)); const rows = Math.ceil((visible.length||1)/cols); const w = Math.floor((window.innerWidth-8)/cols), h = Math.floor((window.innerHeight-70)/rows); visible.forEach((k,i)=>{ const a=apps[k]; a.el.classList.remove('maximized'); a.maximized=false; a.minimized=false; a.el.style.display='block'; a.el.style.left=(i%cols)*w+'px'; a.el.style.top=(30+Math.floor(i/cols)*h)+'px'; a.el.style.width=(w-6)+'px'; a.el.style.height=(h-8)+'px'; }); }
+  desktop.addEventListener('mousedown', e => { if(e.target === desktop || e.target.classList.contains('icons')) clearIconSelection(); });
+  desktop.addEventListener('contextmenu', e => { e.preventDefault(); if(e.target === desktop || e.target.classList.contains('icons')) clearIconSelection(); closeMenus(); desktopMenu.classList.add('open'); desktopMenu.style.left = e.clientX+'px'; desktopMenu.style.top = e.clientY+'px'; });
+  function dialog(title, html, buttons=[{label:'OK'}]){ dialogLayer.innerHTML = `<div class="dialog"><div class="dialog-title"><span>${title}</span><span>✕</span></div><div class="dialog-body">${html}</div><div class="dialog-actions"></div></div>`; dialogLayer.classList.add('open'); const actions = dialogLayer.querySelector('.dialog-actions'); buttons.forEach((b,i)=>{ const btn=document.createElement('button'); btn.className='dialog-btn'; btn.textContent=b.label; btn.addEventListener('click', ()=>{ beeps.click(); dialogLayer.classList.remove('open'); if(b.onClick) b.onClick(); }); actions.appendChild(btn); if(i===0) setTimeout(()=>btn.focus(),30); }); beeps.open(); }
+  function showAbout(){ dialog('About', `<div class="center"><div class="about-logo">🪟</div><div><b>Perplexity Tribute Edition v3.1</b></div><div class="small" style="margin-top:8px">A fan-made retro browser tribute inspired by the Windows 3.1 look and feel.</div><div class="small" style="margin-top:8px">Not affiliated with Microsoft. Perplexity AI opens the real Perplexity website in a new tab.</div></div>`, [{label:'OK'}]); }
+  function showError(title,msg){ dialog('Error', `<div class="err-row"><div class="error-icon">⚠️</div><div><div><b>${title}</b></div><div style="margin-top:8px">${msg}</div></div></div>`, [{label:'OK'}]); beeps.error(); }
+  document.addEventListener('keydown', e => { if(e.ctrlKey && e.altKey && e.key.toLowerCase()==='delete'){ e.preventDefault(); bsod.classList.add('open'); beeps.error(); setTimeout(()=>{ bsod.classList.remove('open'); beeps.boot(); }, 2600); } if(e.key==='Escape'){ closeMenus(); desktopMenu.classList.remove('open'); if(dialogLayer.classList.contains('open')) dialogLayer.classList.remove('open'); } });
+  const pqInput = document.getElementById('pqInput'); const pqAsk = document.getElementById('pqAsk'); const pqSpinner = document.getElementById('pqSpinner'); const pqStatus = document.getElementById('pqStatus');
+  function askPerplexity(){ const q = pqInput.value.trim(); if(!q) return showError('Empty query', 'Please type a question for Perplexity AI.'); pqSpinner.classList.add('spin'); pqStatus.textContent='Thinking...'; beeps.click(); setTimeout(()=>{ window.open('https://www.perplexity.ai/search?q='+encodeURIComponent(q), '_blank', 'noopener'); pqSpinner.classList.remove('spin'); pqStatus.textContent='Opened in new tab'; beeps.open(); }, 700); }
+  pqAsk.addEventListener('click', askPerplexity); pqInput.addEventListener('keydown', e=>{ if(e.key==='Enter') askPerplexity(); });
+  const noteText = document.getElementById('noteText'); const noteStatus = document.getElementById('noteStatus');
+  document.getElementById('noteSave').addEventListener('click', ()=>{ const blob = new Blob([noteText.value], {type:'text/plain'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'UNTITLED.TXT'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 1000); noteStatus.textContent='Saved UNTITLED.TXT'; beeps.open(); });
+  document.getElementById('noteClear').addEventListener('click', ()=>{ noteText.value=''; noteStatus.textContent='Cleared'; beeps.click(); });
+  noteText.addEventListener('input', ()=> noteStatus.textContent='Modified');
+  const dosOutput = document.getElementById('dosOutput'); const dosInput = document.getElementById('dosInput');
+  function dosPrint(t=''){ dosOutput.textContent += t + '\n'; dosOutput.scrollTop = dosOutput.scrollHeight; }
+  function initDos(){ dosOutput.textContent='Microsoft(R) MS-DOS(R) Tribute Edition\nVersion 3.10\n(C) Perplexity Tribute Systems\n\nType HELP for available commands.\n\n'; }
+  function runDos(cmdline){ dosPrint('C:\\> ' + cmdline); const raw = cmdline.trim(); if(!raw){ dosPrint(''); return; } const [cmd,...rest] = raw.split(' '); const arg = rest.join(' '); switch(cmd.toLowerCase()){ case 'help': dosPrint('HELP DIR CLS VER ECHO DATE TIME PERPLEXITY'); break; case 'dir': dosPrint(' Volume in drive C is TRIBUTE_31\n Directory of C:\\\n\nPERPLEX~1 EXE     04-08-26\nNOTEPAD  EXE     04-08-26\nMINE     EXE     04-08-26\nCOMMAND  COM     04-08-26\nAUTOEXEC BAT     04-08-26\n         5 File(s)'); break; case 'cls': dosOutput.textContent=''; break; case 'ver': dosPrint('MS-DOS Tribute Version 3.10'); break; case 'echo': dosPrint(arg); break; case 'date': dosPrint(new Date().toDateString()); break; case 'time': dosPrint(new Date().toLocaleTimeString()); break; case 'perplexity': dosPrint('Secret mode enabled. Curiosity detected.'); setTimeout(()=>showAbout(),200); break; default: dosPrint('Bad command or file name'); } dosPrint(''); }
+  dosInput.addEventListener('keydown', e=>{ if(e.key==='Enter'){ runDos(dosInput.value); dosInput.value=''; } });
+  initDos();
+  const mineGrid = document.getElementById('mineGrid'); const mineCount = document.getElementById('mineCount'); const mineTime = document.getElementById('mineTime'); const mineReset = document.getElementById('mineReset');
+  let board, mines, revealed, flagged, gameOver, started, timer, secs;
+  function mineDigits(n){ return String(n).padStart(3,'0').slice(-3); }
+  function initMine(){ board=[]; mines=10; revealed=0; flagged=0; gameOver=false; started=false; secs=0; clearInterval(timer); mineTime.textContent='000'; mineCount.textContent=mineDigits(mines-flagged); mineReset.textContent='🙂'; for(let y=0;y<9;y++){ board[y]=[]; for(let x=0;x<9;x++) board[y][x]={mine:false,revealed:false,flag:false,count:0}; } let placed=0; while(placed<10){ const x=Math.floor(Math.random()*9), y=Math.floor(Math.random()*9); if(!board[y][x].mine){ board[y][x].mine=true; placed++; } } for(let y=0;y<9;y++) for(let x=0;x<9;x++) if(!board[y][x].mine){ let c=0; for(let yy=-1;yy<=1;yy++) for(let xx=-1;xx<=1;xx++){ const ny=y+yy,nx=x+xx; if(board[ny]?.[nx]?.mine) c++; } board[y][x].count=c; } renderMine(); }
+  function startTimer(){ if(started) return; started=true; timer=setInterval(()=>{ secs++; mineTime.textContent=mineDigits(secs); },1000); }
+  function reveal(x,y){ const cell=board[y]?.[x]; if(!cell || cell.revealed || cell.flag || gameOver) return; cell.revealed=true; revealed++; if(cell.mine){ gameOver=true; mineReset.textContent='☹'; clearInterval(timer); revealAllMines(); beeps.error(); return; } if(cell.count===0){ for(let yy=-1;yy<=1;yy++) for(let xx=-1;xx<=1;xx++) if(xx||yy) reveal(x+xx,y+yy); } }
+  function revealAllMines(){ for(let y=0;y<9;y++) for(let x=0;x<9;x++) if(board[y][x].mine) board[y][x].revealed=true; renderMine(); }
+  function checkWin(){ if(!gameOver && revealed===71){ gameOver=true; mineReset.textContent='😎'; clearInterval(timer); beeps.open(); } }
+  function renderMine(){ mineGrid.innerHTML=''; for(let y=0;y<9;y++) for(let x=0;x<9;x++){ const c=board[y][x]; const d=document.createElement('div'); d.className='cell'; if(c.revealed){ d.classList.add('revealed'); if(c.mine){ d.textContent='💣'; d.classList.add('mine'); } else if(c.count){ d.textContent=c.count; d.classList.add('c'+c.count); } } else if(c.flag) d.textContent='⚑'; d.addEventListener('click', ()=>{ startTimer(); reveal(x,y); renderMine(); checkWin(); }); d.addEventListener('contextmenu', e=>{ e.preventDefault(); if(c.revealed || gameOver) return; startTimer(); c.flag=!c.flag; flagged += c.flag?1:-1; mineCount.textContent=mineDigits(mines-flagged); beeps.click(); renderMine(); }); mineGrid.appendChild(d); } }
+  mineReset.addEventListener('click', ()=>{ beeps.click(); initMine(); });
+  initMine();
+  let bootPct=0;
+  const bootInt = setInterval(()=>{ bootPct += Math.random()*18; bootBar.style.width = Math.min(100, bootPct) + '%'; if(bootPct >= 100){ clearInterval(bootInt); setTimeout(()=>{ boot.classList.remove('open'); beeps.boot(); openWindow('perplexity'); openWindow('mine'); }, 250); } }, 160);
+  window.addEventListener('resize', ()=>{ if(!body.classList.contains('mobile') && window.innerWidth < 700) body.classList.add('mobile'); });
+})();
+</script>
+</body>
+</html>
